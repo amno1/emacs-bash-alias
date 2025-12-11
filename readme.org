@@ -1,7 +1,7 @@
 
 * About
 
-Enable the use of Bash aliases in built-in shell-command and async-shell-comand.
+Very small and minimal mode to enable the use of Bash aliases in GNU Emacs.
 
 * Installation
 
@@ -21,33 +21,27 @@ To enable Bash aliases autoload this library by adding:
 
 somewhere in your init file.
 
-
 You can also toggle bash-alias-mode with:
-
 
     M-x bash-alias-mode RET
 
-
 When bash-alias-mode is enabled, you can either run
-
 
     M-x shell-command-with-aliases or M-x async-shell-command-with-aliases
 
-
 instead of ordinary shell-command and async-shell-command.
 
-Both functions install themselves as redirects for built-in ones, so if you use keyboard shortcuts to call shell-command, the new ones will automatically be called.
+Both functions install themselves as shortcut redirects for built-in ones. If you use keyboard shortcuts to call shell-command, by default M-! and M-& for async-shell-command, those keys will be automatically rebound to new ones.
 
-
-If you change your Bash aliases, you will have to regenerate a new alias table. You can do it manually for the session and future sessions by running:
+If you change aliases in your shell, you will have to regenerate a new alias table. You can do it manually for the session by running:
 
     M-x bash-alias-collect-aliases RET
 
 * How it works
 
-Provided shell-command-with-aliases and async-shell-command-with-aliases wrap built-in ones but do a lookup on alias before they actually execute shell-command. There are other ways to do this, advice or a pre-command-hook, but I think a simple wrapper is the safest alternative in this case. If someone can convince me that advice would be a better option, I am not impossible to change that one.
+Provided shell-command-with-aliases and async-shell-command-with-aliases wrap built-in ones, but they do a lookup on alias before they actually execute the command. There are other ways to do this, advice or a pre-command-hook, but I think a simple wrapper is the safest alternative in this case. If someone can convince me that advice would be a better option, I am not impossible to change that one.
 
-The core of this is collecting aliases from a bash as Emacs sees it. Since Bash aliases can be scattered in different files and sourced via .bashrc, it is not possible to collect them by just parsing a file or two. The only "failsafe" way is to actually ask Bash which aliases does it know about.
+The core of this is collecting aliases from a bash as Emacs sees it. Since Bash aliases can be scattered in different files sourced via .bashrc, it is not failsafe to collect them by just parsing .bashrc file or similar. I think more "failsafe" way is to actually ask Bash which aliases does it know about, and that is what this little library is about.
 
 * Extra chatter
 
