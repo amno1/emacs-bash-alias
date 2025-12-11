@@ -25,18 +25,18 @@ You can also toggle bash-alias-mode with:
 
     M-x bash-alias-mode RET
 
-When bash-alias-mode is enabled, you can either run
+When bash-alias-mode is enabled, you can use explicitly bash-alias-shell-command and bash-alias-async-shell-command in places where you would use shell-command and async-shell-command:
 
-    M-x shell-command-with-aliases or M-x async-shell-command-with-aliases
+    M-x bash-alias-shell-command or M-x bash-alias-async-shell-command
 
-instead of ordinary shell-command and async-shell-command.
-
-Both functions install themselves as shortcut redirects for built-in ones. If you use keyboard shortcuts to call shell-command, by default M-! and M-& for async-shell-command, those keys will be automatically rebound to new ones.
+Both functions install themselves as shortcut redirects. Shell-commans is bound by default to M-! and async-shell-command to M-&. Whichever keys they are bound to will be automatically rebound to bash-alias commands.
 
 If you change aliases in your shell, you will have to regenerate a new alias table. You can do it manually for the session by running:
 
     M-x bash-alias-collect-aliases RET
 
+Aliases are generated each time the mode is started.
+    
 * How it works
 
 Provided shell-command-with-aliases and async-shell-command-with-aliases wrap built-in ones, but they do a lookup on alias before they actually execute the command. There are other ways to do this, advice or a pre-command-hook, but I think a simple wrapper is the safest alternative in this case. If someone can convince me that advice would be a better option, I am not impossible to change that one.

@@ -5,6 +5,8 @@
 ;; Author: Arthur Miller <arthur.miller@live.com>
 ;; Maintainer: Arthur Miller <arthur.miller@live.com>
 ;; Version: 1.0.0
+;; Package-Requires: ((emacs "24.4"))
+;; URL: https://github.com/amno1/emacs-bash-alias
 ;; Keywords: convenience, tools, shell
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -51,14 +53,14 @@
                   (1+ (point)) (1- (line-end-position)))
                  bash-alias--table)))))
 
-(defun shell-command-with-aliases ()
+(defun bash-alias-shell-command ()
   "Like `shell-command' but understands Bash aliases."
   (interactive)
   (let* ((args (eval (cadr (interactive-form 'shell-command))))
          (cmd (string-trim (pop args))))
     (apply #'shell-command (or (gethash cmd bash-alias--table) cmd) args)))
 
-(defun async-shell-command-with-aliases ()
+(defun bash-alias-async-shell-command ()
   "Like `shell-command' but understands Bash aliases."
   (interactive)
   (let* ((args (eval (cadr (interactive-form 'shell-command))))
@@ -67,7 +69,7 @@
 
 (eval-when-compile (require 'dired-x))
 
-(defun dired-smart-shell-command-with-aliases ()
+(defun bash-alias-dired-smart-shell-command ()
     "Like `dired-smart-shell-command' but understands Bash aliases."
     (interactive)
     (unless (eq major-mode 'dired-mode)
@@ -79,14 +81,14 @@
 
 (defvar bash-alias-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map [remap shell-command] #'shell-command-with-aliases)
-    (define-key map [remap async-shell-command] #'async-shell-command-with-aliases)
+    (define-key map [remap shell-command] #'bash-alias-shell-command)
+    (define-key map [remap async-shell-command] #'bash-alias-async-shell-command)
     map))
 
-;; unless dired-x is not loaded, install ourselves in the future
+;; unless dired-x is not loaded, install ourselves into the future
 (with-eval-after-load 'dired-x
   (define-key dired-mode-map [remap dired-smart-shell-command]
-                #'dired-smart-shell-command-with-aliases))
+                #'bash-alias-dired-smart-shell-command))
 
 ;;;###autoload
 (define-minor-mode bash-alias-mode
@@ -96,13 +98,13 @@
    (bash-alias-mode
     (unless bash-alias--table (bash-alias-collect-aliases))
     (define-key bash-alias-mode-map [remap shell-command]
-                #'shell-command-with-aliases)
+                #'bash-alias-shell-command)
     (define-key bash-alias-mode-map [remap async-shell-command]
-                #'async-shell-command-with-aliases)
+                #'bash-alias-async-shell-command)
     ;; install ourselves into dired-mode-map if dired and dired-x are loaded
     (when (featurep 'dired-x) ; dired-x is loaded
       (define-key dired-mode-map [remap dired-smart-shell-command]
-                  #'dired-smart-shell-command-with-aliases)))
+                  #'bash-alias-dired-smart-shell-command)))
    (t
     (setf bash-alias--table nil)
     (define-key bash-alias-mode-map [remap shell-command] nil)
