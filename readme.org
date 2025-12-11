@@ -1,0 +1,62 @@
+
+* About
+
+Enable the use of Bash aliases in built-in shell-command and async-shell-comand.
+
+* Installation
+
+This package should be installable from Melpa, so you can install it via M-x package-install bash-alias RET.
+
+Alternatively, you can also use package-vc-install, or simply make bash-alias.el available somewhere in load-path in your Emacs.
+
+* Usage
+
+To enable Bash aliases autoload this library by adding:
+
+#+begin_src emacs-lisp
+
+(bash-alias-mode +1)
+
+#+end_src
+
+somewhere in your init file.
+
+
+You can also toggle bash-alias-mode with:
+
+
+    M-x bash-alias-mode RET
+
+
+When bash-alias-mode is enabled, you can either run
+
+
+    M-x shell-command-with-aliases or M-x async-shell-command-with-aliases
+
+
+instead of ordinary shell-command and async-shell-command.
+
+Both functions install themselves as redirects for built-in ones, so if you use keyboard shortcuts to call shell-command, the new ones will automatically be called.
+
+
+If you change your Bash aliases, you will have to regenerate a new alias table. You can do it manually for the session and future sessions by running:
+
+    M-x bash-alias-collect-aliases RET
+
+* How it works
+
+Provided shell-command-with-aliases and async-shell-command-with-aliases wrap built-in ones but do a lookup on alias before they actually execute shell-command. There are other ways to do this, advice or a pre-command-hook, but I think a simple wrapper is the safest alternative in this case. If someone can convince me that advice would be a better option, I am not impossible to change that one.
+
+The core of this is collecting aliases from a bash as Emacs sees it. Since Bash aliases can be scattered in different files and sourced via .bashrc, it is not possible to collect them by just parsing a file or two. The only "failsafe" way is to actually ask Bash which aliases does it know about.
+
+* Extra chatter
+
+Typically, M-! is probably not the first thing you would do when you start Emacs. For those would want to shave off some CPU cycles at init time it is possible to lazy load it in idle-timer, for example you can add this in your init file:
+
+#+begin_src emacs-lisp
+
+(run-with-idle-timer 0.25 nil (lambda () (bash-alias-mode +1)))
+
+#+end_src
+
+I don't think that matters really, but I don't think it hurts in thie case either.
