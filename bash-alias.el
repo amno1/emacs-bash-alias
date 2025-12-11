@@ -67,28 +67,11 @@
          (cmd (string-trim (pop args))))
     (apply #'async-shell-command (or (gethash cmd bash-alias--table) cmd) args)))
 
-(eval-when-compile (require 'dired-x))
-
-(defun bash-alias-dired-smart-shell-command ()
-    "Like `dired-smart-shell-command' but understands Bash aliases."
-    (interactive)
-    (unless (eq major-mode 'dired-mode)
-      (error "This command runs only in Dired-mode"))
-    (let* ((args (eval (cadr (interactive-form 'dired-smart-shell-command))))
-           (cmd (string-trim (pop args))))
-      (apply #'dired-smart-shell-command
-             (or (gethash cmd bash-alias--table) cmd) args)))
-
 (defvar bash-alias-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map [remap shell-command] #'bash-alias-shell-command)
     (define-key map [remap async-shell-command] #'bash-alias-async-shell-command)
     map))
-
-;; unless dired-x is not loaded, install ourselves into the future
-(with-eval-after-load 'dired-x
-  (define-key dired-mode-map [remap dired-smart-shell-command]
-                #'bash-alias-dired-smart-shell-command))
 
 ;;;###autoload
 (define-minor-mode bash-alias-mode
@@ -100,17 +83,11 @@
     (define-key bash-alias-mode-map [remap shell-command]
                 #'bash-alias-shell-command)
     (define-key bash-alias-mode-map [remap async-shell-command]
-                #'bash-alias-async-shell-command)
-    ;; install ourselves into dired-mode-map if dired and dired-x are loaded
-    (when (featurep 'dired-x) ; dired-x is loaded
-      (define-key dired-mode-map [remap dired-smart-shell-command]
-                  #'bash-alias-dired-smart-shell-command)))
+                #'bash-alias-async-shell-command))
    (t
     (setf bash-alias--table nil)
     (define-key bash-alias-mode-map [remap shell-command] nil)
-    (define-key bash-alias-mode-map [remap async-shell-command] nil)
-    (when (featurep 'dired-x)
-      (define-key dired-mode-map [remap dired-smart-shell-command] nil)))))
+    (define-key bash-alias-mode-map [remap async-shell-command] nil))))
 
 (provide 'bash-alias)
 ;;; bash-alias.el ends here
