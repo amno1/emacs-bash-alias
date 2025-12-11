@@ -1,7 +1,7 @@
 
 * About
 
-Very small and minimal mode to enable the use of Bash aliases in GNU Emacs.
+Enable the use of Bash aliases in GNU Emacs.
 
 * Installation
 
